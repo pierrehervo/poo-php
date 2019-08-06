@@ -29,7 +29,7 @@
         
             var_dump($game);
 
-            $aragorn->attack($legolas); //Enle x pdv en fonction de force
+            $aragorn->attack($legolas); //Enleve x pdv en fonction de force
             $legolas->rangedAttack($gandalf);//Enlève x pdv en fonction de la force *3
             $gandalf->castSpell($aragorn); //Enleve x pdv en fonction de mana
             $legolas->attack($gandalf);
