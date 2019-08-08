@@ -5,13 +5,13 @@ class Contact
     public $nom;
     public $prenom;
     public $numero;
-    public $mail;
+    public $email;
 
-    public function __construct($name, $prenom, $numero, $mail)
+    public function __construct($name, $prenom, $numero, $email)
     {
-     $this->name = $name;   
+     $this->name = $nom;   
      $this->prenom = $prenom;   
      $this->numero = $numero;   
-     $this->mail = $mail;   
+     $this->email = $email;   
     }
 }
