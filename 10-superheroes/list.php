@@ -48,8 +48,8 @@ include 'partials/header.php';?>
                         <td><?=$superHeroe->universe ?></td>
                         <td>
                             <a href="" class="btn btn-secondary">Révéler</a>
-                            <a href="" class="btn btn-primary">Modifier</a>
-                            <a href="" class="btn btn-danger">Supprimer</a>
+                            <a href="./edit.php?id=<?= $superHeroe->id ?>" class="btn btn-primary">Modifier</a>
+                            <a href="./delete.php?id=<?= $superHeroe->id ?>" class="btn btn-danger">Supprimer</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
