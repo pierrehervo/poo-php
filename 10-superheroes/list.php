@@ -9,12 +9,10 @@
  * 
  * Une fois le fichier list.php terminé, on ajoutera une navbar dans le partials/header.php. La navbar permettra de naviguer entre la page list.php (les héros) et la page create.php (crrer un héros). Il faudra bien inclure le header et footer dans create.php
  */
-
-//Connexion BDD
-$db = new PDO('mysql:host=localhost;dbname=superheroes;charset=utf8', 'root','',[PDO::ATTR_ERRMODE => PDO:: ERRMODE_WARNING]);
+require_once 'config/autoload.php';
 
 //Récuperer les héros
-$q = $db->prepare ("SELECT id, name, power, identity, universe FROM superheroe");
+$q = Database::get()->query ("SELECT id, name, power, identity, universe FROM superheroe");
     
 $q->execute();
 
@@ -33,12 +31,25 @@ include 'partials/header.php';?>
                     <th scope="col">Pouvoir</th>
                     <th scope="col">Identité</th>
                     <th scope="col">Univers</th>
+                    <th scope="col">Ennemis</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
 
-                <?php foreach($superHeroes as $superHeroe): ?>
+            <?php foreach ($superHeroes as $superHeroe) {
+                    $enemies = Database::get()->query('SELECT * FROM superheroe sh
+                    INNER JOIN superheroe_has_supernaughty shs ON shs.superheroe_id = sh.id
+                    INNER JOIN supernaughty sn ON shs.supernaughty_id = sn.id
+                    WHERE sh.id = '.$superHeroe->id)->fetchAll(PDO::FETCH_OBJ);
+
+                    // On récupère les ennemis du super héros
+                    $enemies = Database::get()->query(
+                       'SELECT * FROM superheroe sh
+                        INNER JOIN superheroe_has_supernaughty shs ON shs.superheroe_id = sh.id
+                        INNER JOIN supernaughty sn ON shs.supernaughty_id = sn.id
+                        WHERE sh.id = '.$superHeroe->id)->fetchAll(PDO::FETCH_OBJ);
+            ?>
                     <tr>
                         <th scope="row"><?=$superHeroe->id ?></th>
                         <td>photo</td>
@@ -46,13 +57,13 @@ include 'partials/header.php';?>
                         <td><?= $superHeroe->power ?></td>
                         <td><?=$superHeroe->identity ?></td>
                         <td><?=$superHeroe->universe ?></td>
+                        <td><?php foreach ($enemies as $enemy) {echo $enemy->name.', ';} ?></td>
                         <td>
                             <a href="" class="btn btn-secondary">Révéler</a>
                             <a href="./edit.php?id=<?= $superHeroe->id ?>" class="btn btn-primary">Modifier</a>
                             <a href="./delete.php?id=<?= $superHeroe->id ?>" class="btn btn-danger">Supprimer</a>
                         </td>
                     </tr>
-                <?php endforeach; ?>
             </tbody>
         </table>
     </div>

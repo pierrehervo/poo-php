@@ -1,64 +1,65 @@
-<?php include 'partials/header.php' ?>
-        <div class="container">
-        <?php
-            //Connexion BDD
-            $db = new PDO('mysql:host=localhost;dbname=superheroes;charset=utf8', 'root','',[PDO::ATTR_ERRMODE => PDO:: ERRMODE_WARNING]);
+<?php include 'partials/header.php';
+require_once 'config/autoload.php';
+?>
+        
+            <?php 
+            /**
+             * Récupere l'id
+             */
+            $id = $_GET['id'] ??  null;
 
-            //Récuperer les héros
-            $id = isset($_GET['id']) ? trim($_GET['id']) : null;
-            $q = $db->prepare ("SELECT id, name, power, identity, universe FROM superheroe");
+            //Réccupere les info des données de l'id selectionné dans le form
+            $q = Database::get()->prepare('SELECT * FROM superheroe WHERE id = :id');  
+            $q->bindValue('id', $id);
             $q->execute();
-
-            if ( $_SERVER['REQUEST_METHOD'] === "POST")//Traitement du formulaire
-            {
-                $id = isset($_POST['id']) ? trim(htmlentities($_POST['id'])) : null;
-                $id = isset($_POST['name']) ? trim(htmlentities($_POST['name'])) : null;
-                $id = isset($_POST['power']) ? trim(htmlentities($_POST['power'])) : null;
-                $id = isset($_POST['identity']) ? trim(htmlentities($_POST['identity'])) : null;
-                $id = isset($_POST['universe']) ? trim(htmlentities($_POST['universe'])) : null;
+            //$superHeroe = $q->fetch(PDO::FETCH_OBJ);
+            
+            // Le setFetchMode ici permet de retourner une instance de SuperHeroe avec fetch plutôt qu'une instance de StdClass
+            $q->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, SuperHeroe::class);
+            $superHeroe = $q->fetch(); // le fetch fait un new SuperHeroe(); grâce à PDO::FETCH_CLASS
+            //var_dump($superHeroe);
 
 
-                $sql = "UPDATE superheroe SET `name`=:name, `power`=:power, `identity`=:identity, `universe`=:universe WHERE `id`=:id";
-                // Préparation de la requête
-                $q = $db->prepare($sql);
-                $q->bindParam(':id', $id);
-                $q->bindParam(':name', $name);
-                $q->bindParam(':power', $power);
-                $q->bindParam(':identity', $identity);
-                $q->bindParam(':universe', $universe);
-                // Execution de la requete
-                $q->execute();
-                // Redirection de l'utilisateur vers la page de détail du film
-                header("location: list.php?id=");
-                exit;
-
-                $superHeroes = $q->fetchAll(PDO::FETCH_OBJ);
-            }
-        ?>
-
-
-            <form action="" method="post">
+            
+            // ICI je MODIFIE les données du formulaire
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Récupérer les données du formulaire
+                // On hydrate une instance de SuperHeroe
+                //$superHeroe = new SuperHeroe();
+                $superHeroe->hydrate($_POST); // On hydrate l'objet avec les données du formulaire
+                // Vérification des données...
+                // Si la requête SQL a réussi
+                if ($superHeroe->update($id)) {
+                    echo '<div class="alert alert-success">Le héros a été modifié</div>';
+                }
+            } 
+            ?>
+            <div class="container">
+            <form method="post">
                 <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" name="name" id="name" class="form-control" placeholder="Nom de Super Héros">
+                    <label for="name">Nom du Héro</label>
+                    <input type="text" value="<?=$superHeroe->name?>" name="name" class="form-control" placeholder="" id="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="power">Pouvoir du Héro</label>
+                    <input type="text" name="power" value="<?=$superHeroe->power?>" class="form-control" placeholder="" id="power">
+                </div>
+
+                <div class="form-group">
+                    <label for="identity">L'identité du Héro</label>
+                    <input type="text" name="identity" value="<?=$superHeroe->identity?>" class="form-control"  id="identity">
                 </div>
                 <div class="form-group">
-                    <label for="power">Power:</label>
-                    <input type="text" name="power" id="power" class="form-control" placeholder="Votre super pouvoir">
-                </div>
-                <div class="form-group">
-                    <label for="identity">Identity:</label>
-                    <input type="text" name="identity" id="identity" class="form-control" placeholder="Identité civile">
-                </div>
-                <div class="form-group">
-                    <label for="universe">Universe</label>
-                    <select id="universe" name="universe" class="form-control">
-                        <option>Marvel</option>
-                        <option>DC</option>
+                    <label for="universe">Pouvoir du Héro</label>
+                    <select class="form-control" name="universe" id="universe">
+                        <option value="Marvel" <?= ($superHeroe->universe === 'Marvel') ? 'selected' : '';?>>Marvel</option>
+                        <option value="DC" <?= ($superHeroe->universe === 'DC') ? 'selected' : '';?> >DC</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Modifier</button>
+                <button type="submit" class="btn btn-secondary">Modifier </button>
             </form>
-        </div>
+            </div>
+
 
         <?php include 'partials/footer.php';?> 

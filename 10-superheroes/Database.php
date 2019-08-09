@@ -2,12 +2,13 @@
 
 class Database
 {
-    public static $pdo;
-
-    public function __get()
+    private static $pdo;
+    public static function get()
     {
-        if (null === self::$pdo){//On s'assure que la connexion à la bdd se fait qu'une seule fois 
-        self::pdo = new PDO('mysql:host=localhost;dbname=superheroes;charset=utf8', 'root','',[PDO::ATTR_ERRMODE => PDO:: ERRMODE_WARNING]);
+        if (null === self::$pdo) { // On s'assure que la connexion à la BDD se fait une seule fois
+            self::$pdo = new PDO('mysql:host=localhost;dbname=superheroes', 'root', '', [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING // Activer les erreurs MySQL
+            ]);
         }
         return self::$pdo;
     }

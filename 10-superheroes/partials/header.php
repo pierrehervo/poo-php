@@ -16,10 +16,18 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="list.php">Liste</a>
+                    <a class="nav-link" href="list.php">Les Super-héros</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="create.php">Créer un Héros!!!</a>
+                </li>
+
+                    <!--LES SUPER VILAINS  -->
+                <li class="nav-item">
+                    <a class="nav-link" href="list-naughty.php">Les Super-vilains</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="create-naughty.php">Créer un Super-vilains!!!</a>
                 </li>
             </ul>
         </div>
